@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | CareerCraft AI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 28px;">
+    <h1 style="font-size: 2.2rem; font-weight: 800; background: var(--grad-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        Welcome back, {{ username }}!
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 6px;">
+        Analyze your resume against your dream job role and get an AI-powered roadmap, gap analysis, and interview prep.
+    </p>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>{{ error }}</span>
+</div>
+{% endif %}
+
+<div class="card">
+    <h2 class="card-title">
+        <i class="fa-solid fa-file-lines"></i>
+        <span>Resume & Career Goal Analyzer</span>
+    </h2>
+
+    <form method="POST" enctype="multipart/form-data" id="analyzer-form">
+        <div class="form-group">
+            <label for="role-input">
+                <i class="fa-solid fa-bullseye" style="color: var(--accent-indigo);"></i>
+                Target Job Role / Career Goal <span style="color: var(--accent-rose);">*</span>
+            </label>
+            <input 
+                type="text" 
+                id="role-input" 
+                name="Role" 
+                placeholder="e.g. Senior Full-Stack Engineer, AI Product Manager, DevOps Architect" 
+                value="{{ target_role if target_role else '' }}"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="resume_text">
+                <i class="fa-solid fa-keyboard" style="color: var(--accent-cyan);"></i>
+                Paste Resume Text
+            </label>
+            <textarea 
+                id="resume_text" 
+                name="resume_text" 
+                placeholder="Paste your complete resume, past experience, skills, and education here..." 
+                rows="6"
+            ></textarea>
+        </div>
+
+        <div class="divider-with-text">OR UPLOAD RESUME DOCUMENT</div>
+
+        <div class="upload-box" id="drop-area">
+            <input type="file" id="file" name="file" accept=".pdf,.docx">
+            <div class="upload-icon">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <div class="upload-text" id="file-label-text">
+                Drop your PDF or DOCX resume here, or <span style="color: var(--accent-indigo);">Browse</span>
+            </div>
+            <div class="upload-subtext">Supported formats: .pdf, .docx (Max 10MB)</div>
+        </div>
+
+        <button type="submit" id="submit-btn" style="margin-top: 10px;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Analyze Resume with AI</span>
+        </button>
+    </form>
+</div>
+
+{% if analysis %}
+<div class="card" style="border-color: rgba(99, 102, 241, 0.4); box-shadow: var(--shadow-glow);">
+    <h2 class="card-title">
+        <i class="fa-solid fa-square-poll-vertical" style="color: var(--accent-emerald);"></i>
+        <span>AI Career Strategy & Analysis Report</span>
+    </h2>
+
+    {% if analysis.error %}
+        <div class="alert alert-danger">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>{{ analysis.error }}</span>
+        </div>
+    {% endif %}
+
+    <!-- Top Summary Banner -->
+    <div class="results-header">
+        <div class="target-badge">
+            <i class="fa-solid fa-bullseye"></i> Target: {{ target_role if target_role else 'Career Role' }}
+        </div>
+        {% if analysis.overall_feedback %}
+            <p class="feedback-text">{{ analysis.overall_feedback }}</p>
+        {% endif %}
+    </div>
+
+    <!-- Skills Match & Missing Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 28px;">
+        <!-- Matched Skills -->
+        <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);">
+            <h3 style="font-size: 1.1rem; color: #34d399; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Relevant Extracted Skills ({{ analysis.skills|length }})</span>
+            </h3>
+            <div class="skills-grid">
+                {% if analysis.skills %}
+                    {% for skill in analysis.skills %}
+                        <span class="skill-tag match">
+                            <i class="fa-solid fa-check"></i> {{ skill }}
+                        </span>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">No matching skills identified.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Missing Skills Gap -->
+        <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);">
+            <h3 style="font-size: 1.1rem; color: #fb7185; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Missing Skills & Gap Analysis ({{ analysis.missing_skills|length }})</span>
+            </h3>
+            <div class="skills-grid">
+                {% if analysis.missing_skills %}
+                    {% for m_skill in analysis.missing_skills %}
+                        <span class="skill-tag missing">
+                            <i class="fa-solid fa-plus"></i> {{ m_skill }}
+                        </span>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">No obvious missing skills identified for this role.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Step-by-Step Learning Roadmap -->
+    {% if analysis.roadmap %}
+    <div style="margin-bottom: 32px;">
+        <h3 style="font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-route" style="color: var(--accent-indigo);"></i>
+            <span>Personalized Action Roadmap</span>
+        </h3>
+        <div class="roadmap-container">
+            {% for item in analysis.roadmap %}
+                <div class="roadmap-card">
+                    <div class="roadmap-header">
+                        <span class="roadmap-step-title">
+                            {% if item is mapping %}
+                                {{ item.step }}
+                            {% else %}
+                                Step {{ loop.index }}: {{ item }}
+                            {% endif %}
+                        </span>
+                        {% if item is mapping and item.duration %}
+                            <span class="roadmap-duration">
+                                <i class="fa-regular fa-clock"></i> {{ item.duration }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    {% if item is mapping and item.description %}
+                        <p class="roadmap-desc">{{ item.description }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tailored Interview Questions -->
+    {% if analysis.interview_questions %}
+    <div>
+        <h3 style="font-size: 1.2rem; color: #ffffff; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-comments" style="color: var(--accent-purple);"></i>
+            <span>Targeted Interview Questions & Prep Tips</span>
+        </h3>
+        <div class="questions-list">
+            {% for q in analysis.interview_questions %}
+                <div class="question-card">
+                    {% if q is mapping %}
+                        {% if q.type %}
+                            <span class="question-type">{{ q.type }}</span>
+                        {% endif %}
+                        <div class="question-text">{{ loop.index }}. {{ q.question }}</div>
+                        {% if q.tip %}
+                            <div class="question-tip">
+                                <strong><i class="fa-regular fa-lightbulb"></i> Answering Strategy:</strong> {{ q.tip }}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="question-text">{{ loop.index }}. {{ q }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const fileInput = document.getElementById('file');
+    const labelText = document.getElementById('file-label-text');
+    const form = document.getElementById('analyzer-form');
+    const submitBtn = document.getElementById('submit-btn');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                labelText.innerHTML = `Selected File: <strong style="color:#10b981;">${this.files[0].name}</strong>`;
+            }
+        });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function() {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Analyzing with AI Model...</span>`;
+        });
+    }
+</script>
+{% endblock %}

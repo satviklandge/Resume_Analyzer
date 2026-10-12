@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis History | CareerCraft AI{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+    <div>
+        <h1 style="font-size: 2rem; font-weight: 800; background: var(--grad-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Analysis History
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            View your saved resume evaluations and generated learning roadmaps.
+        </p>
+    </div>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-primary" style="width: auto; padding: 10px 20px;">
+        <i class="fa-solid fa-plus"></i> New Analysis
+    </a>
+</div>
+
+{% if reports %}
+    <div class="history-grid">
+        {% for r in reports %}
+        <div class="history-card">
+            <div>
+                <div class="history-card-header">
+                    <span class="target-badge" style="margin-bottom: 0;">
+                        <i class="fa-solid fa-briefcase"></i> {{ r.target_role }}
+                    </span>
+                    <span style="font-size: 0.8rem; color: var(--text-dim);">#{{ r.id }}</span>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-dim); text-transform: uppercase; margin-bottom: 4px;">
+                        Resume Content Preview
+                    </div>
+                    <div class="history-preview">
+                        {{ r.resume_preview }}
+                    </div>
+                </div>
+
+                {% if r.analysis and r.analysis.overall_feedback %}
+                    <div style="font-size: 0.88rem; color: #e2e8f0; margin-bottom: 16px; line-height: 1.5;">
+                        <strong>Key Feedback:</strong> {{ r.analysis.overall_feedback[:180] }}{% if r.analysis.overall_feedback|length > 180 %}...{% endif %}
+                    </div>
+                {% endif %}
+
+                {% if r.analysis and r.analysis.skills %}
+                    <div style="margin-bottom: 14px;">
+                        <div style="font-size: 0.8rem; font-weight: 600; color: #34d399; margin-bottom: 6px;">
+                            <i class="fa-solid fa-check"></i> Matched Skills ({{ r.analysis.skills|length }})
+                        </div>
+                        <div class="skills-grid" style="gap: 6px;">
+                            {% for s in r.analysis.skills[:4] %}
+                                <span class="skill-tag match" style="font-size: 0.78rem; padding: 4px 10px;">{{ s }}</span>
+                            {% endfor %}
+                            {% if r.analysis.skills|length > 4 %}
+                                <span class="skill-tag" style="background: rgba(255,255,255,0.06); font-size: 0.78rem; padding: 4px 8px;">+{{ r.analysis.skills|length - 4 }} more</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if r.analysis and r.analysis.missing_skills %}
+                    <div style="margin-bottom: 14px;">
+                        <div style="font-size: 0.8rem; font-weight: 600; color: #fb7185; margin-bottom: 6px;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Missing Skills ({{ r.analysis.missing_skills|length }})
+                        </div>
+                        <div class="skills-grid" style="gap: 6px;">
+                            {% for ms in r.analysis.missing_skills[:3] %}
+                                <span class="skill-tag missing" style="font-size: 0.78rem; padding: 4px 10px;">{{ ms }}</span>
+                            {% endfor %}
+                            {% if r.analysis.missing_skills|length > 3 %}
+                                <span class="skill-tag" style="background: rgba(255,255,255,0.06); font-size: 0.78rem; padding: 4px 8px;">+{{ r.analysis.missing_skills|length - 3 }} more</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div style="margin-top: 16px; border-top: 1px solid var(--border-subtle); padding-top: 12px; display: flex; justify-content: flex-end;">
+                <details style="width: 100%;">
+                    <summary style="cursor: pointer; color: var(--accent-indigo); font-weight: 600; font-size: 0.88rem; outline: none;">
+                        <i class="fa-solid fa-eye"></i> View Full Analysis Details
+                    </summary>
+                    <div style="margin-top: 12px; font-size: 0.85rem; background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm);">
+                        {% if r.analysis and r.analysis.roadmap %}
+                            <p style="font-weight: 700; color: #fff; margin-bottom: 4px;">Roadmap Steps:</p>
+                            <ul style="padding-left: 20px; color: var(--text-muted); margin-bottom: 10px;">
+                                {% for step in r.analysis.roadmap %}
+                                    <li>
+                                        {% if step is mapping %}
+                                            <strong>{{ step.step }}:</strong> {{ step.description }} ({{ step.duration }})
+                                        {% else %}
+                                            {{ step }}
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+
+                        {% if r.analysis and r.analysis.interview_questions %}
+                            <p style="font-weight: 700; color: #fff; margin-bottom: 4px;">Sample Questions:</p>
+                            <ul style="padding-left: 20px; color: var(--text-muted);">
+                                {% for q in r.analysis.interview_questions %}
+                                    <li>
+                                        {% if q is mapping %}
+                                            {{ q.question }}
+                                        {% else %}
+                                            {{ q }}
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </details>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 3rem; color: var(--text-dim); margin-bottom: 16px;">
+            <i class="fa-solid fa-folder-open"></i>
+        </div>
+        <h3 style="font-size: 1.3rem; margin-bottom: 8px;">No analysis history found</h3>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">You haven't run any resume evaluations yet.</p>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary" style="display: inline-flex; width: auto;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Evaluate Your First Resume
+        </a>
+    </div>
+{% endif %}
+
+{% endblock %}

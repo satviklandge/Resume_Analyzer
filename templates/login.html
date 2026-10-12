@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Login | CareerCraft AI{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Welcome Back</h2>
+        <p class="sub-text">Log in to continue optimizing your career path</p>
+
+        {% if error %}
+        <div class="alert alert-danger">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="email">
+                    <i class="fa-solid fa-envelope" style="color: var(--accent-indigo);"></i> Email Address
+                </label>
+                <input type="email" id="email" name="email" placeholder="name@example.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fa-solid fa-lock" style="color: var(--accent-pink);"></i> Password
+                </label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+
+            <div class="auth-links">
+                <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+            </div>
+
+            <button type="submit">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span>Sign In</span>
+            </button>
+        </form>
+
+        <p class="switch-auth">
+            Don't have an account? <a href="{{ url_for('signup') }}">Create one here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

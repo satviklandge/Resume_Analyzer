@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Resume & Career Strategist{% endblock %}</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Canva-inspired Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="brand-logo">
+                <span>CareerCraft AI</span>
+            </a>
+            <nav>
+                {% if session.get('user') %}
+                    <a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">
+                        <i class="fa-solid fa-chart-line"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('history') }}" class="{% if request.endpoint == 'history' %}active{% endif %}">
+                        <i class="fa-solid fa-clock-rotate-left"></i> History
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="btn-logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">
+                        <i class="fa-solid fa-right-to-bracket"></i> Login
+                    </a>
+                    <a href="{{ url_for('signup') }}" class="{% if request.endpoint == 'signup' %}active{% endif %}">
+                        <i class="fa-solid fa-user-plus"></i> Sign Up
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CareerCraft AI. Powered by Advanced Agentic Intelligence.</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
