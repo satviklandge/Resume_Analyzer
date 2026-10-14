@@ -1,0 +1,20 @@
+# Web Framework
+Flask>=3.0.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# Database & ORM
+SQLAlchemy>=2.0.0
+PyMySQL>=1.1.0
+cryptography>=42.0.0
+
+# AI & LLM Integration
+groq>=0.30.0
+
+# Resume Document Processing
+PyPDF2>=3.0.0
+python-docx>=1.0.0
+
+# HTTP Requests
+requests>=2.31.0
