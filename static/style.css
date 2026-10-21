@@ -1,8 +1,35 @@
+/* Palette (hex values are screen approximations of the Pantone shades)
+   Neon Navy  20-0142 TPM  -> #1E1FA6
+   Baja Blue  18-3946 TCX  -> #4F7BBA
+   Peach Whip 14-1309 TCX  -> #F4CBAA
+*/
+:root {
+    --neon-navy: #01014b;
+    --baja-blue: #5e6166;
+    --peach-whip: #F4CBAA;
+
+    --navy-deep: #2b2c37;
+    /* darkened Neon Navy for page depth */
+    --navy-surface: #0F1050;
+    /* card base */
+    --text: #F7F1EC;
+    --text-muted: #B9BFE0;
+    --border: rgba(244, 203, 170, 0.28);
+
+    --grad-page: linear-gradient(160deg, #05061F 0%, var(--navy-deep) 40%, #14157A 100%);
+    --grad-card: linear-gradient(145deg, #12136B 0%, var(--navy-surface) 55%, #0A0B3A 100%);
+    --grad-brand: linear-gradient(90deg, var(--neon-navy) 0%, var(--baja-blue) 100%);
+    --grad-accent: linear-gradient(90deg, var(--baja-blue) 0%, var(--peach-whip) 100%);
+}
+
 body {
     margin: 0;
     font-family: Arial, system-ui, sans-serif;
-    background-color: #1a1a1a;
-    color: #f0f0f0;
+    background: var(--grad-page);
+    background-attachment: fixed;
+    background-color: var(--navy-deep);
+    color: var(--text);
+    min-height: 100vh;
 }
 
 .author-container,
@@ -15,22 +42,25 @@ body {
 
 .auth-card {
     width: 400px;
-    background-color: #2c2c2c;
+    max-width: calc(100% - 32px);
+    background: var(--grad-card);
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(30, 31, 166, 0.45);
+    box-sizing: border-box;
 }
 
 .auth-card h2 {
     text-align: center;
     margin-bottom: 10px;
-    color: #f0f0f0;
+    color: var(--peach-whip);
 }
 
 .sub-text {
     text-align: center;
     margin-bottom: 20px;
-    color: #b0b0b0;
+    color: var(--text-muted);
     font-size: 14px;
 }
 
@@ -39,17 +69,18 @@ body {
     padding: 12px;
     margin-top: 12px;
     border-radius: 8px;
-    border: 1px solid #444;
+    border: 1px solid rgba(79, 123, 186, 0.6);
     font-size: 16px;
-    background-color: #1a1a1a;
-    color: #f0f0f0;
+    background-color: rgba(5, 6, 31, 0.75);
+    color: var(--text);
     box-sizing: border-box;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .auth-card input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: var(--peach-whip);
+    box-shadow: 0 0 0 3px rgba(244, 203, 170, 0.25);
 }
 
 .auth-card button {
@@ -58,15 +89,19 @@ body {
     margin-top: 20px;
     border-radius: 8px;
     border: none;
-    background-color: #007bff;
+    background: var(--grad-brand);
+    background-size: 200% 100%;
+    background-position: 0% 0;
     color: #fff;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-position 0.4s, box-shadow 0.3s;
 }
 
 .auth-card button:hover {
-    background-color: #0056b3;
+    background-position: 100% 0;
+    box-shadow: 0 0 16px rgba(79, 123, 186, 0.6);
 }
 
 .auth-links {
@@ -75,18 +110,18 @@ body {
 
 .auth-links a {
     font-size: 14px;
-    color: #007bff;
+    color: var(--peach-whip);
     text-decoration: underline;
 }
 
 .switch-auth {
-    color: #b0b0b0;
+    color: var(--text-muted);
     margin-top: 15px;
     text-align: center;
 }
 
 .switch-auth a {
-    color: #007bff;
+    color: var(--peach-whip);
     text-decoration: underline;
 }
 
@@ -97,10 +132,12 @@ body {
 }
 
 header {
-    color: #f0f0f0;
+    color: var(--text);
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    background-color: #2c2c2c;
+    background: var(--grad-brand);
+    box-shadow: 0 4px 18px rgba(30, 31, 166, 0.55);
+    border-bottom: 2px solid transparent;
+    border-image: var(--grad-accent) 1;
 }
 
 header .container {
@@ -109,11 +146,12 @@ header .container {
     align-items: center;
 }
 
-header h1, header .brand-logo {
+header h1,
+header .brand-logo {
     display: inline;
     font-size: 24px;
     font-weight: 600;
-    color: #f0f0f0;
+    color: #fff;
     text-decoration: none;
 }
 
@@ -123,14 +161,14 @@ nav {
 }
 
 nav a {
-    color: #f0f0f0;
+    color: #fff;
     text-decoration: none;
     font-size: 16px;
     transition: color 0.3s;
 }
 
 nav a:hover {
-    color: #007bff;
+    color: var(--peach-whip);
 }
 
 main {
@@ -138,25 +176,42 @@ main {
 }
 
 .card {
-    background: #2c2c2c;
-    color: #f0f0f0;
+    background: var(--grad-card);
+    color: var(--text);
     padding: 25px;
     border-radius: 14px;
     margin-bottom: 25px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    transition: 0.2s ease;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 25px rgba(7, 8, 43, 0.7);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
     transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(30, 31, 166, 0.5);
 }
 
 h2 {
     margin-bottom: 20px;
+    background: var(--grad-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--peach-whip);
+    /* fallback */
+    display: inline-block;
+}
+
+/* Keep auth card heading solid for readability */
+.auth-card h2 {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    display: block;
 }
 
 h3 {
     font-size: 18px;
+    color: var(--peach-whip);
 }
 
 textarea {
@@ -164,12 +219,18 @@ textarea {
     min-height: 120px;
     padding: 12px;
     border-radius: 8px;
-    border: 1px solid #007bff;
-    background-color: #1a1a1a;
-    color: #f0f0f0;
+    border: 1px solid var(--baja-blue);
+    background-color: rgba(5, 6, 31, 0.75);
+    color: var(--text);
     margin-top: 10px;
     font-size: 14px;
     box-sizing: border-box;
+}
+
+textarea:focus,
+input:focus {
+    outline: 2px solid var(--peach-whip);
+    outline-offset: 1px;
 }
 
 input[type="file"],
@@ -180,9 +241,9 @@ input[type="password"] {
     margin-top: 10px;
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #444;
-    background-color: #1a1a1a;
-    color: #f0f0f0;
+    border: 1px solid rgba(36, 55, 82, 0.6);
+    background-color: rgba(5, 6, 31, 0.75);
+    color: var(--text);
     box-sizing: border-box;
 }
 
@@ -192,26 +253,35 @@ input[name="role"] {
     margin-top: 15px;
     padding: 12px;
     border-radius: 8px;
-    border: 1px solid #444;
-    background-color: #1a1a1a;
-    color: #f0f0f0;
+    border: 1px solid rgba(79, 123, 186, 0.6);
+    background-color: rgba(5, 6, 31, 0.75);
+    color: var(--text);
     box-sizing: border-box;
 }
 
 button {
     margin-top: 15px;
     padding: 12px 20px;
-    background: #007bff;
+    background: var(--grad-brand);
+    background-size: 200% 100%;
+    background-position: 0% 0;
     color: #ffffff;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
-    transition: 0.2s;
+    font-weight: 600;
+    transition: background-position 0.4s, box-shadow 0.3s;
 }
 
 button:hover {
-    background: #0056b3;
+    background-position: 100% 0;
+    box-shadow: 0 0 14px rgba(79, 123, 186, 0.6);
+}
+
+button:focus-visible {
+    outline: 2px solid var(--peach-whip);
+    outline-offset: 2px;
 }
 
 ul {
@@ -226,7 +296,22 @@ footer {
     margin-top: 60px;
     padding: 20px;
     text-align: center;
-    background: #2c2c2c;
-    color: #b0b0b0;
+    background: linear-gradient(90deg, #0A0B3A 0%, var(--navy-surface) 100%);
+    border-top: 2px solid transparent;
+    border-image: var(--grad-accent) 1;
+    color: var(--text-muted);
     font-size: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .card,
+    button,
+    .auth-card button {
+        transition: none;
+    }
+
+    .card:hover {
+        transform: none;
+    }
 }
