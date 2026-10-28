@@ -31,6 +31,11 @@ Resume_Analyzer/
 └── static/           # CSS and client-side assets
 ```
 
+## Previews 
+
+![Image 1](Assets/image_1.png)
+![Image 2](Assets/image_2.png)
+
 ## Prerequisites
 
 - Python 3.9 or higher
