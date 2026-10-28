@@ -126,9 +126,6 @@ Then open [http://localhost:5000](http://localhost:5000) in your browser.
 - [ ] Support additional file formats
 - [ ] Compare multiple resumes against the same role
 
-## License
-
-Specify a license here (for example, MIT).
 
 ## Author
 
